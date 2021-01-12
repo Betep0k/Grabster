@@ -1,0 +1,6 @@
+pyopenssl
+urllib3
+requests
+selenium
+tqdm
+progressbar

@@ -1,0 +1,1 @@
+from .screenshot_collector import ScreenshotCollector

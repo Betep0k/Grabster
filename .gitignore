@@ -1,0 +1,8 @@
+.idea/
+todo.txt
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store
+test/
+web-screenshots/
