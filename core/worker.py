@@ -154,4 +154,5 @@ class Worker:
                         print('%s: ' % module_name)
                         module['obj'].run_post_module(global_state, self.settings, self.modules, self.coloring)
                     except Exception as e:
+                        print(e)
                         pass

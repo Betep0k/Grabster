@@ -27,13 +27,14 @@ class ScreenshotCollector:
 
     def collect_screenshots(self, global_state):
         for service in global_state.state['services']:
-            print(service['service']['host'], service['service']['port'])
+            self.get_screenshot(service['service'])
+            print(' - %s://%s:%s/ (%s)' % (service['service']['proto'], service['service']['host'], service['service']['port'], service['service']['vhost']))
 
-    def get_screenshot(self, screenshot_target):
-        proto = screenshot_target.proto
-        ip = screenshot_target.ip
-        port = screenshot_target.port
-        vhost = screenshot_target.vhost
+    def get_screenshot(self, service):
+        proto = service['proto']
+        ip = service['host']
+        port = service['port']
+        vhost = service['vhost']
         DRIVER = 'chromedriver'
         chrome_options = Options()
         chrome_options.add_argument('--headless')
