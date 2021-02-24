@@ -7,13 +7,15 @@ class Main:
             'is_enabled': False
         },
         'post-module': {
-            'is_enabled': True,
+            'is_enabled': False,
             'priority': 1,
             'banner': "Screenshot Collector"
         }
     }
 
-    def __init__(self):
+    def __init__(self, args):
+        if args.get_screenshots:
+            self.MODULE_SETTINGS['post-module']['is_enabled'] = True
         # init
         pass
 

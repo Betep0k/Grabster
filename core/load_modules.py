@@ -3,7 +3,7 @@ import importlib
 import sys
 
 
-def load_modules(coloring):
+def load_modules(coloring, args):
     # 'module-name': {'obj': obj, 'ring': 0, 'banner': 0}
     loaded_modules = 0
     print(' Modules:')
@@ -17,7 +17,7 @@ def load_modules(coloring):
         is_peri_module = False
         is_post_module = False
         try:
-            module = importlib.import_module('modules.%s' % module_name).Main()
+            module = importlib.import_module('modules.%s' % module_name).Main(args)
             check_status, check_message = module.check()
             if not check_status:
                 print(f' {coloring.RED}[-]{coloring.RESET} %s (%s)' % (module_name, check_message))
@@ -46,6 +46,9 @@ def load_modules(coloring):
                 else:
                     type = f'({coloring.CYAN}post-module{coloring.RESET})'
                 print(f' {coloring.GREEN}[+]{coloring.RESET} %s %s' % (module_name, type))
+            else:
+                print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Module is disabled!'))
+
         except Exception as e:
             print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Undefined error!'))
             modules_failed_to_load = True

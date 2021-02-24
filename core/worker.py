@@ -91,11 +91,18 @@ class Worker:
         intro_message = IntroMessage(self.settings, self.modules)
         intro_message.print()
 
-        self.modules = load_modules(self.coloring)
+        self.modules = load_modules(self.coloring, self.args)
 
         print('===============================================================')
         print(f'\t\t{self.coloring.ORANGE}   Analysis of services{self.coloring.RESET}')
         print('===============================================================\n\n')
+
+        # todo:
+        # Надо сделать так, чтобы модули могут добавлять новые сервисы в очередь
+        # И воркер после окончания очередного прохода цеплялся за новую очередь 
+        # И начинал новый обход
+        # При этом нужно контролировать уровень рекурсии
+        # И вообще, чтобы в настройках можно было бы задать явно уровень рекурсии 
 
         # Pushing parser jobs (services) to queue
         current_service_id = 0
@@ -121,6 +128,10 @@ class Worker:
                     parser_queue.put(ParserJob(current_service_id, host, port, None, self.args, self.vhosts,
                                                global_variables, self.modules, self.settings, output_queue, parser_queue,
                                                global_state))
+
+        # по логике здесь надо запускать рекурсию
+        # надо придумать, как получать список новых целей для следующего этапа рекурсии
+        # возможно есть смысл даже хранить их отдельно для каждого этапа
 
         # Starting output thread
         w = threading.Thread(target=self.process_output_job, args=(output_queue, global_variables, 'Parsing services',

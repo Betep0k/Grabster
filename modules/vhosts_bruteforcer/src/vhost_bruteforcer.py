@@ -16,7 +16,8 @@ class VHostBruteforcer:
 		self.max_size_for_diff = 50000
 		self.size_diff_rate = 0.01
 
-	def brute_vhosts(self, host, args, port, proto, vhosts, global_variables, output_queue, parser_queue, state, state_lock):
+	# def brute_vhosts(self, host, args, port, proto, vhosts, global_variables, output_queue, parser_queue, state, state_lock):
+	def brute_vhosts(self, service)
 		output = ''
 		random_vhost = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(16))
 		try:

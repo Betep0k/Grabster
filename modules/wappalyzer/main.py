@@ -13,7 +13,7 @@ class Main:
         }
     }
 
-    def __init__(self):
+    def __init__(self, args):
         # init
         pass
 

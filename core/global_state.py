@@ -12,3 +12,7 @@ class GlobalState:
 
     def add_service_state(self, state):
         self.state['services'].append(state)
+
+    def is_host_presented(self, ip, port):
+        # or return False
+        return True
