@@ -16,6 +16,8 @@ def load_modules(coloring, args):
     for module_name in dirs:
         is_peri_module = False
         is_post_module = False
+        if module_name == 'template':
+            continue
         try:
             module = importlib.import_module('modules.%s' % module_name).Main(args)
             check_status, check_message = module.check()
@@ -47,10 +49,10 @@ def load_modules(coloring, args):
                     type = f'({coloring.CYAN}post-module{coloring.RESET})'
                 print(f' {coloring.GREEN}[+]{coloring.RESET} %s %s' % (module_name, type))
             else:
-                print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Module is disabled!'))
+                print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Module is disabled'))
 
         except Exception as e:
-            print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Undefined error!'))
+            print(f' {coloring.RED}[-]{coloring.RESET} %s \t\t\t(%s)' % (module_name, 'Undefined error'))
             modules_failed_to_load = True
             # print(e)
             pass
