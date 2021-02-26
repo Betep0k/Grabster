@@ -1,4 +1,4 @@
-from .src import SSLAnalyzer
+from .src import VHostBruteforcer
 
 
 class Main:
@@ -6,7 +6,7 @@ class Main:
         'peri-module': {
             'is_enabled': True,
             'priority': 1,
-            'banner': "SSL"
+            'banner': "VHosts Bruteforcer"
         },
         'post-module': {
             'is_enabled': False
@@ -14,13 +14,20 @@ class Main:
     }
 
     def __init__(self, args):
+        try:
+            vhosts_filename = args.vhosts_filename
+            fd = open(vhosts_filename)
+            data = fd.read()
+            self.vhosts = list(filter(None, data.split('\n')))
+        except Exception as e:
+            print(e)
         # init
-        pass
 
     def run_peri_module(self, local_state, settings, modules, coloring):
-        # ssl_analyzer = SSLAnalyzer(settings, modules, coloring)
-        # module_output = ssl_analyzer.get_domains_from_cert(local_state['service'])
+        vhost_bruteforcer = VHostBruteforcer(settings, modules, coloring)
+        module_output = vhost_bruteforcer.brute_vhosts(local_state['service'], self.vhosts)
         return module_output, module_output
+        pass
 
     def run_post_module(self, global_state, settings, modules, coloring):
         return None

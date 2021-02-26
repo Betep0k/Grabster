@@ -68,3 +68,4 @@ def load_modules(coloring, args):
             exit(1)
         else:
             sys.stdout.write("You should choose 'Yes' or 'No'")
+    return modules

@@ -7,7 +7,7 @@ class IntroMessage:
         self.settings = settings
         self.modules = modules
         self.coloring = Coloring(self.settings)
-        self.VERSION = '0.0.1'
+        self.VERSION = '0.0.2'
         self.GITHUB = '...'
 
     def _current_config(self):
