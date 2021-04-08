@@ -23,11 +23,13 @@ class Main:
             print(e)
         # init
 
-    def run_peri_module(self, local_state, settings, modules, coloring):
-        vhost_bruteforcer = VHostBruteforcer(settings, modules, coloring)
+    def run_peri_module(self, local_state, settings, modules, coloring, recursion):
+        # we work only with primary host
+        if local_state['service']['vhost'] is not None:
+            return None, None
+        vhost_bruteforcer = VHostBruteforcer(settings, modules, coloring, recursion)
         module_output = vhost_bruteforcer.brute_vhosts(local_state['service'], self.vhosts)
         return module_output, module_output
-        pass
 
     def run_post_module(self, global_state, settings, modules, coloring):
         return None

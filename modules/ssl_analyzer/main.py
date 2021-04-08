@@ -17,7 +17,10 @@ class Main:
         # init
         pass
 
-    def run_peri_module(self, local_state, settings, modules, coloring):
+    def run_peri_module(self, local_state, settings, modules, coloring, recursion):
+        # we work only with primary host
+        if local_state['service']['vhost'] is not None:
+            return None, None
         ssl_analyzer = SSLAnalyzer(settings, modules, coloring)
         module_output = ssl_analyzer.get_domains_from_cert(local_state['service'])
         return module_output, module_output

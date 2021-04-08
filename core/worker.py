@@ -16,6 +16,7 @@ from core.coloring import Coloring
 from core.load_modules import load_modules
 from core.constants import MAX_PRIORITIES
 from core.global_state import GlobalState
+from core.recursion import Recursion
 
 
 class Worker:
@@ -51,7 +52,7 @@ class Worker:
             current_job = q.get()
             parser = Parser(current_job.modules, current_job.settings)
             output = parser.parse(current_job.host, current_job.port, current_job.vhost, current_job.args, current_job.global_variables,
-                                  current_job.vhosts, current_job.output_queue, current_job.parser_queue, current_job.global_state)
+                                  current_job.vhosts, current_job.output_queue, current_job.parser_queue, current_job.global_state, current_job.recursion)
             output_queue.put(OutputJob(0, output))
             q.task_done()
 
@@ -88,6 +89,8 @@ class Worker:
         # Initializing global state objects
         global_state = GlobalState()
 
+        recursion = Recursion()
+
         intro_message = IntroMessage(self.settings, self.modules)
         intro_message.print()
 
@@ -119,7 +122,7 @@ class Worker:
                 # todo: глобальные стейты и локер тоже не нужны
                 parser_queue.put(ParserJob(current_service_id, host, port, None, self.args, self.vhosts,
                                            global_variables, self.modules, self.settings, output_queue, parser_queue,
-                                           global_state))
+                                           global_state, recursion))
                 global_variables['total_services'] += 1
             else:
                 host = service
@@ -127,11 +130,7 @@ class Worker:
                 for port in [80, 443]:
                     parser_queue.put(ParserJob(current_service_id, host, port, None, self.args, self.vhosts,
                                                global_variables, self.modules, self.settings, output_queue, parser_queue,
-                                               global_state))
-
-        # по логике здесь надо запускать рекурсию
-        # надо придумать, как получать список новых целей для следующего этапа рекурсии
-        # возможно есть смысл даже хранить их отдельно для каждого этапа
+                                               global_state, recursion))
 
         # Starting output thread
         w = threading.Thread(target=self.process_output_job, args=(output_queue, global_variables, 'Parsing services',
@@ -152,6 +151,56 @@ class Worker:
 
         parser_queue.join()
         output_queue.join()
+
+        # todo: надо объединить оба цикла
+
+        for recursion_level in range(0, recursion.recursion_max_level):
+
+            # if empty - stop
+            if len(recursion.recursive_services[recursion_level]) == 0:
+                break
+            recursion.increment_recursion_level()
+
+            print('\n\n\n===============================================================')
+            print(f'\t\t{self.coloring.ORANGE}    Recursion Level %d{self.coloring.RESET}' % recursion_level)
+            print('===============================================================\n\n')
+            parser_queue = queue.PriorityQueue()
+            output_queue = queue.PriorityQueue()
+            current_service_id = 0
+            global_variables = {
+                'total_services': 0
+            }
+            for service in recursion.recursive_services[recursion_level]:
+                current_service_id += 1
+                # todo: clean queue ???
+                parser_queue.put(ParserJob(current_service_id, service['host'], service['port'], service['vhost'], self.args, self.vhosts,
+                                           global_variables, self.modules, self.settings, output_queue, parser_queue,
+                                           global_state, recursion))
+                global_variables['total_services'] += 1
+
+            # Starting output thread
+            w = threading.Thread(target=self.process_output_job, args=(output_queue, global_variables, 'Parsing services',
+                                                                       self.coloring, False,))
+            w.setDaemon(True)
+            w.start()
+
+            # Starting parser threads
+            if self.settings['DEBUG']:
+                w = threading.Thread(target=self.process_parser_job, args=(parser_queue, output_queue))
+                w.setDaemon(True)
+                w.start()
+            else:
+                for i in range(0, self.settings['THREADS']):
+                    w = threading.Thread(target=self.process_parser_job, args=(parser_queue, output_queue))
+                    w.setDaemon(True)
+                    w.start()
+
+            parser_queue.join()
+            output_queue.join()
+            # global_state.increment_recursion_level()
+            # по логике здесь надо запускать рекурсию
+            # надо придумать, как получать список новых целей для следующего этапа рекурсии
+            # возможно есть смысл даже хранить их отдельно для каждого этапа
 
         print('\n\n\n===============================================================')
         print(f'\t\t\t{self.coloring.ORANGE}Post Modules{self.coloring.RESET}')

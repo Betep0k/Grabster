@@ -17,7 +17,7 @@ class Main:
         # init
         pass
 
-    def run_peri_module(self, local_state, settings, modules, coloring):
+    def run_peri_module(self, local_state, settings, modules, coloring, recursion):
         wappalyzer = Wappalyzer(settings, modules, coloring)
         module_output, module_state = wappalyzer.identification(local_state['service'])
         return module_output, module_state

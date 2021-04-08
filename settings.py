@@ -4,6 +4,7 @@ settings = {
     'COLORS': True,
     'TIMEOUT': 2,  # requests timeout
     'THREADS': 10,
+    'MAX_RECURSION_LEVEL': 1,
     'USER-AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:69.0) Gecko/20100101 Firefox/69.0',
     'PROXIES': {
         # 'http': 'socks5://localhost:3333',

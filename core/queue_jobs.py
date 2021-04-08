@@ -49,7 +49,7 @@ class ScreenshotJob:
 @functools.total_ordering
 class ParserJob:
 
-    def __init__(self, priority, host, port, vhost, args, vhosts, global_variables, modules, settings, output_queue, parser_queue, global_state):
+    def __init__(self, priority, host, port, vhost, args, vhosts, global_variables, modules, settings, output_queue, parser_queue, global_state, recursion):
         self.priority = priority
         self.host = host
         self.port = port
@@ -62,6 +62,7 @@ class ParserJob:
         self.output_queue = output_queue
         self.parser_queue = parser_queue
         self.global_state = global_state
+        self.recursion = recursion
         return
 
     def __eq__(self, other):

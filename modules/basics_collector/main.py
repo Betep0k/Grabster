@@ -17,7 +17,7 @@ class Main:
         # init
         pass
 
-    def run_peri_module(self, local_state, settings, modules, coloring):
+    def run_peri_module(self, local_state, settings, modules, coloring, recursion):
         basics_collector = BasicsCollector(settings, modules, coloring)
         module_output, module_state = basics_collector.get_basics(local_state['response'])
         return module_output, module_state

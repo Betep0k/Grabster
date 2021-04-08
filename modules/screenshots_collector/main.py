@@ -19,7 +19,7 @@ class Main:
         # init
         pass
 
-    def run_peri_module(self, local_state, settings, modules, coloring):
+    def run_peri_module(self, local_state, settings, modules, coloring, recursion):
         return None, None
 
     def run_post_module(self, global_state, settings, modules, coloring):

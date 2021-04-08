@@ -9,10 +9,11 @@ from core.queue_jobs import ParserJob
 
 class VHostBruteforcer:
 
-	def __init__(self, settings, modules, coloring):
+	def __init__(self, settings, modules, coloring, recursion):
 		self.settings = settings
 		self.modules = modules
 		self.coloring = coloring
+		self.recursion = recursion
 		self.min_diff_rate = 0.60  # default difference rate
 		self.max_size_for_diff = 50000
 		self.size_diff_rate = 0.01
@@ -42,6 +43,7 @@ class VHostBruteforcer:
 					diff = response_length/base_response_length
 					if abs(diff - 1.0) > self.size_diff_rate:
 						output += ' + %s\n' % vhost
+						self.recursion.add_service_for_parsing(service['proto'], service['host'], service['port'], vhost)
 						# global_variables['total_services'] += 1
 						# # todo: выставил большой host_id, но нужно его считать динамически
 						# # возможно придётся добавлять запоминание последнего id в очередь
@@ -61,6 +63,7 @@ class VHostBruteforcer:
 					diff_rate = difflib.SequenceMatcher(None, base_response_text, response.text).ratio()
 					if diff_rate < self.min_diff_rate:
 						output += ' + %s\n' % vhost
+						self.recursion.add_service_for_parsing(service['proto'], service['host'], service['port'], vhost)
 						# global_variables['total_services'] += 1
 						# # todo: выставил большой host_id, но нужно его считать динамически
 						# # возможно придётся добавлять запоминание последнего id в очередь
