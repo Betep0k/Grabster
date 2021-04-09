@@ -93,6 +93,6 @@ class VHostBruteforcer:
 						pass
 					# print(' - %s [diff: %.2f%%]' % (vhost, diff_rate*100))
 			except Exception as e:
-				print(e)
+				# print(e)
 				continue
 		return output
