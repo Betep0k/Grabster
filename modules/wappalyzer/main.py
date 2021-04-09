@@ -18,6 +18,10 @@ class Main:
         pass
 
     def run_peri_module(self, local_state, settings, modules, coloring, recursion):
+        # wappalyzer can't work with vhost on the current moment
+        # todo: try to solve this problem
+        if local_state['service']['vhost'] is not None:
+            return None, None
         wappalyzer = Wappalyzer(settings, modules, coloring)
         module_output, module_state = wappalyzer.identification(local_state['service'])
         return module_output, module_state

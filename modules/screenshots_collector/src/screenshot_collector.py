@@ -43,6 +43,10 @@ class ScreenshotCollector:
         chrome_options.add_argument('--ignore-certificate-errors')
         chrome_options.add_argument("--start-maximized")
         # https://stackoverflow.com/questions/48450594/selenium-timed-out-receiving-message-from-renderer/52340526#52340526
+
+        # if vhost is None:
+        #    vhost = ''
+
         if vhost != '':
             # todo: тут потенциально возможна ошибка
             # если на входе IP это на самом деле домен
@@ -56,7 +60,9 @@ class ScreenshotCollector:
             try:
                 driver.get('%s://%s:%s/' % (proto, vhost, port))
             except TimeoutException:
-                pass
+                return
+            except Exception as e:
+                return
         else:
             driver = webdriver.Chrome(DRIVER, options=chrome_options)
             driver.set_window_position(0, 0)
@@ -65,7 +71,12 @@ class ScreenshotCollector:
             try:
                 driver.get('%s://%s:%s/' % (proto, ip, port))
             except TimeoutException:
-                pass
+                return
+            except Exception as e:
+                # print(proto, ip, port)
+                # print(e)
+                return
+
         try:
             # try:
             # 	WebDriverWait(driver, 1).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
