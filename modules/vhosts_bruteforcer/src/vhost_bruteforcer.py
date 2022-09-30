@@ -22,10 +22,14 @@ class VHostBruteforcer:
 	def brute_vhosts(self, service, vhosts):
 		output = ''
 		random_vhost = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(16))
+		headers = {
+            'User-Agent': self.settings['USER-AGENT'],
+            'Host': random_vhost
+        }
 		try:
 			response = requests.get('%s://%s:%s' % (service['proto'], service['host'], service['port']), verify=False,
 									timeout=self.settings['TIMEOUT'], allow_redirects=False,
-									proxies=self.settings['PROXIES'], headers={'Host': random_vhost})
+									proxies=self.settings['PROXIES'], headers=headers)
 		except:
 			return ''
 		if self.settings['DEBUG'] is True:
@@ -35,9 +39,13 @@ class VHostBruteforcer:
 		base_response_length = len(response.text)
 		for vhost in vhosts:
 			try:
+				headers = {
+					'User-Agent': self.settings['USER-AGENT'],
+					'Host': vhost
+				}
 				response = requests.get('%s://%s:%s' % (service['proto'], service['host'], service['port']), verify=False,
 										timeout=self.settings['TIMEOUT'], allow_redirects=False,
-										proxies=self.settings['PROXIES'], headers={'Host': vhost})
+										proxies=self.settings['PROXIES'], headers=headers)
 				response_length = len(response.text)
 				if response_length > self.max_size_for_diff:
 					diff = response_length/base_response_length

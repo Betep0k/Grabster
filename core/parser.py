@@ -19,7 +19,9 @@ class Parser:
     def parse(self, host, port, vhost, args, global_variables, vhosts, output_queue, parser_queue, global_state, recursion):
         state = {}
         output = ''
-        headers = {}
+        headers = {
+            'User-Agent': self.settings['USER-AGENT']
+        }
         try:
             # Trying access to page using HTTP
             # If attempt is failed, then trying HTTPS
